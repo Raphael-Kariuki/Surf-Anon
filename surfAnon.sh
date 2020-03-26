@@ -29,12 +29,25 @@ done
 if [ ! -f ${BrowserPATH}  ]; then
     read -p "Apparently your preferred browser isn't installed. Install? :" userAnswer
   if [ $userAnswer == "y" ]; then
-    sudo apt-get install $browser -y
-    else
-    echo "just use tor-browser"
+    for package in $browser tor proxychains ;do 
+      dpkg -s "$package" > /dev/null 2>&1 && echo "$package is installed" ||
+        if ping -c 5 -q -W 4 google.com > /dev/null 2>&1 ;then
+          echo "Downloading Packages" && if ["$EUID" -ne 0 ] ;then 
+            sudo apt-get install $package -y;
+          else
+            apt-get install $package -y
+        fi
+          exit
+      else
+      echo "My guy, hauna net"
+      fi
+    done
+      else
+        echo "just use tor-browser"
   fi
   
 fi
+
 # timestamp
 ts=`date +%T`
 echo "$ts: begin checking at $BrowserPATH.."
