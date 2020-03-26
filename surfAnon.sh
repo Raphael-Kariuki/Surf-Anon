@@ -1,0 +1,42 @@
+#!/bin/bash
+#process to check whether browseris running,returning an exit status
+check_process() {
+  echo "$ts: checking $1"
+  [ "$1" = "" ]  && return 0
+  [ `pgrep -n $1` ] && return 1 || return 0
+}
+#receive input from user on preffered browser
+read -p "Enter preffered browser name: " p
+ 
+#array to receive varied inputs
+
+firefox=(firefox mozilla firefox-esr Firefox Mozilla)
+brave=(brave brave-browser Brave Brave-browser Brave-Browser)
+chromium=(chromium chromium-browser Chromium Chromium-browser Chromium-Browser)
+
+a=0
+while [ $a -lt 5 ];do
+  if [ $p = ${firefox[$a]} ]; then 
+    browser=firefox-esr
+    elif [ $p =  ${brave[$a]} ];then
+    browser=brave-browser
+    elif [ $p =  ${chromium[$a]} ];then 
+    browser=chromium
+  fi
+    a=`expr $a + 1`
+done
+    BrowserPATH=$(whereis $browser|awk '{printf "%s\n",$2}')
+if [ ! -f ${BrowserPATH}  ]; then
+    read -p "Apparently your preferred browser isn't installed. Install? :" userAnswer
+  if [ $userAnswer == "y" ]; then
+    sudo apt-get install $browser -y
+    else
+    echo "just use tor-browser"
+  fi
+  
+fi
+# timestamp
+ts=`date +%T`
+echo "$ts: begin checking at $BrowserPATH.."
+check_process "$browser"
+[ $? -eq 0 ] && echo "$ts: not running, restarting..."  && service tor start && `proxychains $BrowserPATH https://www.duckduckgo.com -i > /dev/null 2>&1` && service tor stop
