@@ -1,5 +1,5 @@
 surfAnon v1.1
-Author:traplab
+Author:m0ckinjay
 
 ,,,,,,,,,,,
 Description
@@ -17,7 +17,7 @@ proxychains
 ,,,,,,
 usage
 ``````
-git clone https://github.com/traplab/surfAnon.git
+git clone https://github.com/m0ckinjay/surfAnon.git
 cd surfAnon
 bash surfAnon.sh 
 
